@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3 col-12">
+            <div class="flex-width mx-auto">
+                    <p class="border-info border-bottom pb-2 text-info">条件入力</p>
+                    <form id="fetchForm">
+                        <div class="form-group row">
+                            <label for="lat" class="col-sm-2 col-form-label">緯度</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="lat" class="form-control" placeholder="45 ~ 50">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="long" class="col-sm-2 col-form-label small">経度</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="long" class="form-control" placeholder="-125 ~ -120">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="living" class="col-sm-2 col-form-label small">リビングの広さ</label>
+                            <div class="col-sm-10">
+                                <input  type="text" name="living" class="form-control" placeholder="100 ~ (sqft)">
+                                <p class="small">※ 1000sqftは約30坪</p>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lot" class="col-sm-2 col-form-label small">駐車場の広さ</label>
+                            <div class="col-sm-10">
+                                <input  type="text" name="lot" class="form-control" placeholder="100 ~ (sqft)">
+                            </div>
+                        </div>  
+                        <div class="form-group row">
+                            <label for="yr" class="col-sm-2 col-form-label small">築年数(年）</label>
+                            <div class="col-sm-10">
+                                <input  type="text" name="yr" class="form-control" placeholder="1900 ~ ">
+                            </div>
+                        </div> 
+                    </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 offset-md-7 col-4 offset-4">
+            <input id="postBtn" type="button" value="予測" class="btn btn-info btn-block">  
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6 offset-md-3 col-12">
+            <p class="border-info border-bottom pb-2 text-info">
+            予測結果
+            <span class="ml-5 text-dark" id="result"></span>
+            </p>
+        </div>
+    </div>
+</div>
+<script>
+    function postFetch(){
+        
+        const fetchForm = document.getElementById('fetchForm');
+        let formData = new FormData(fetchForm);
+
+        //formデータを取り出して連想配列に入れる
+        let object = {};
+        for (let value of formData.entries()) {
+            object[value[0]]=value[1];
+        }
+        //ajax通信
+        fetch('/predict', {
+            method: 'POST',
+            body: JSON.stringify(object),
+            headers:{
+                'Content-Type': 'application/json'
+            },
+        }).then((response) => {
+            if(!response.ok) {
+                console.log('error!');
+            } 
+            console.log('ok!');
+            return response.json();
+        }).then((data)  => {
+            //成功したときの処理
+            document.getElementById("result").innerHTML = data['result'];
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
+    let button = document.getElementById('postBtn');
+    button.addEventListener('click', postFetch, false);
+
+</script>
+
+{% endblock %}
