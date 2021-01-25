@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request,render_template
-import requests
 #パッケージをインストールする場合は、パッケージ名.モジュール名にする
 #ここではpredというモジュールの中からClassifierというクラスをインポートしている
 from classification.pred import Classifier
